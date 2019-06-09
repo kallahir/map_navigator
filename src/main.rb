@@ -58,11 +58,12 @@ class Main
         @map[@curr.point.y][@curr.point.x] = Position::VISITED
         @map[new_point.y][new_point.x] = Position::CURRENT
 
+        # TODO: update the surrounding for the current points
         @curr = @curr.up
       elsif @curr.up == Position::UNKNOWN
         # expand_map(@map)
         expand_map(@position_map)
-        
+
         new_point = Point.new({:x => @curr.point.x, :y => @curr.point.y - 1})
         @map[@curr.point.y][@curr.point.x] = Position::VISITED
         @map[new_point.y][new_point.x] = Position::CURRENT
@@ -197,10 +198,13 @@ class Main
     puts
     @map.each_with_index do |line, i|
       print '%3d ' % [i]
-      line.each do |pos|
+      line.each_with_index do |pos, j|
         print " o ".on_blue.white if pos == Position::UNKNOWN
-        print " o ".on_green.white if pos == Position::VISITED 
+        print " o ".on_green.white if pos == Position::VISITED
         print " o ".on_red.white if pos == Position::CURRENT
+        # print '%2d,%2d '.on_blue.white % [i,j] if pos == Position::UNKNOWN
+        # print '%2d,%2d '.on_green.black % [i,j] if pos == Position::VISITED
+        # print '%2d,%2d '.on_red.white % [i,j] if pos == Position::CURRENT
       end
       puts
     end
@@ -233,7 +237,7 @@ class Position
   attr_accessor :up, :down, :left, :right, :point
 
   UNKNOWN = nil
-  BARRIER = -1 
+  BARRIER = -1
   VISITED = 1
   CURRENT = 'X'
 
@@ -245,7 +249,7 @@ class Position
       @down  = args[:down]
       @right = args[:right]
       @left  = args[:left]
-      @point = args[:point] 
+      @point = args[:point]
     end
   end
 
@@ -253,7 +257,7 @@ class Position
 
   def starting_point
     @right = UNKNOWN
-    @down  = UNKNOWN 
+    @down  = UNKNOWN
     @point = Point.new({:x => 0, :y => 0})
   end
 end
