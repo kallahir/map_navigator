@@ -108,7 +108,7 @@ class Navigator
         else
           print " o ".on_blue.white if pos == Point::UNKNOWN
           print " o ".on_green.white if pos == Point::VISITED
-          print " o ".on_red.white if pos == Point::CURRENT
+          print "<^>".on_red.white if pos == Point::CURRENT
         end
       end
       puts
