@@ -29,32 +29,32 @@ class Navigator
       destination = Point.new({:x => @position.x - 1, :y => @position.y})
       expand_map(cmd, destination)
 
-      @map[@position.x - @x_offset][@position.y] = Point::VISITED
-      @map[destination.x - @x_offset][destination.y] = Point::CURRENT
+      @map[@position.x - @x_offset][@position.y - @y_offset] = Point::VISITED
+      @map[destination.x - @x_offset][destination.y - @y_offset] = Point::CURRENT
 
       @position = destination
     when :right
       destination = Point.new({:x => @position.x, :y => @position.y + 1})
       expand_map(cmd, destination)
 
-      @map[@position.x - @x_offset][@position.y] = Point::VISITED
-      @map[destination.x - @x_offset][destination.y] = Point::CURRENT
+      @map[@position.x - @x_offset][@position.y - @y_offset] = Point::VISITED
+      @map[destination.x - @x_offset][destination.y - @y_offset] = Point::CURRENT
 
       @position = destination
     when :down
       destination = Point.new({:x => @position.x + 1, :y => @position.y})
       expand_map(cmd, destination)
 
-      @map[@position.x - @x_offset][@position.y] = Point::VISITED
-      @map[destination.x - @x_offset][destination.y] = Point::CURRENT
+      @map[@position.x - @x_offset][@position.y - @y_offset] = Point::VISITED
+      @map[destination.x - @x_offset][destination.y - @y_offset] = Point::CURRENT
 
       @position = destination
     when :left
       destination = Point.new({:x => @position.x, :y => @position.y - 1})
       expand_map(cmd, destination)
 
-      @map[@position.x - @x_offset][@position.y] = Point::VISITED
-      @map[destination.x - @x_offset][destination.y] = Point::CURRENT
+      @map[@position.x - @x_offset][@position.y - @y_offset] = Point::VISITED
+      @map[destination.x - @x_offset][destination.y - @y_offset] = Point::CURRENT
 
       @position = destination
     end
@@ -63,28 +63,31 @@ class Navigator
   def expand_map(cmd, destination)
     case cmd
     when :up
-      if destination.x <= 0
-        return if destination.x >= @x_offset
-      else
-        return
-      end
+      return if destination.x > 0
+      return if destination.x >= @x_offset
+
       @map.unshift([Point::UNKNOWN] * @map.first.size)
       @x_offset -= 1
     when :right
-      return if @map.first.size > destination.y + @y_offset
+      return if destination.y < 0
+      return if destination.y < @map.first.size + @y_offset
+
       @map.each do |line|
         line << Point::UNKNOWN
       end
     when :down
-      if destination.x >= 0
-        return if destination.x < @map.size + @x_offset
-      else
-        return
-      end
+      return if destination.x < 0
+      return if destination.x < @map.size + @x_offset
 
       @map << [Point::UNKNOWN] * @map.first.size
     when :left
-      # @y_offset -= 1
+      return if destination.y > 0
+      return if destination.y >= @y_offset
+
+      @map.each do |line|
+        line.unshift(Point::UNKNOWN)
+      end
+      @y_offset -= 1
       return
     end
   end
