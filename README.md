@@ -3,8 +3,9 @@
 ## Information & Instructions
 
 * The Cartesian Plan is tilted 90º to the right, that's why the `y` axis is on the top and `x` axis is on the left hand side.
-* Currently to start the `Map Navigator` you will have to execute `ruby src/navigator.rb`.
+* Currently to start the `Map Navigator` you will have to execute `ruby src/main.rb`.
 * To navigate in the map use the arrow keys.
+* To stop the execution press `CTRL-C`.
 * To execute the navigator you will need the following gems:
   * colorize
 
@@ -15,4 +16,4 @@
 
 ## Known Issues
 
-* Nothing right now...
+* Nothing right now.

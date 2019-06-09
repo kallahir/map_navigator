@@ -1,9 +1,8 @@
-require 'pp'
 require 'colorize'
-require_relative 'keyboard'
+require_relative 'point'
 
 class Navigator
-  attr_accessor :map, :position, :x_offset, :y_offset
+  attr_reader :map, :position, :x_offset, :y_offset
 
   def initialize
     @position = Point.new({:x => 0, :y => 0})
@@ -12,52 +11,52 @@ class Navigator
     @y_offset = 0
   end
 
-  def exec
-    while true
-      system('clear')
-      show_map
-      cmd = read_keyboard
-      move(cmd)
+  def move(cmd)
+    case cmd
+    when :up
+      execute_movement(cmd: cmd, x_modifier: -1)
+    when :right
+      execute_movement(cmd: cmd, y_modifier: 1)
+    when :down
+      execute_movement(cmd: cmd, x_modifier: 1)
+    when :left
+      execute_movement(cmd: cmd, y_modifier: -1)
+    end
+  end
+
+  def show_map
+    puts "Current Position => x: #{@position.x} | y: #{@position.y}"
+    puts '  x'
+    print 'y  '
+    (0...@map.first.size).each do |y|
+      print '%3d' % [y + @y_offset]
+    end
+    puts
+    @map.each_with_index do |line, x|
+      print '%3d ' % [x + @x_offset]
+      line.each_with_index do |pos, y|
+        if ((x + @x_offset) == 0 && (y + @y_offset) == 0) && pos != Point::CURRENT
+          print " X ".on_yellow.black
+        else
+          print " o ".on_blue.white if pos == Point::UNKNOWN
+          print " o ".on_green.white if pos == Point::VISITED
+          print "<^>".on_red.white if pos == Point::CURRENT
+        end
+      end
+      puts
     end
   end
 
   private
 
-  def move(cmd)
-    case cmd
-    when :up
-      destination = Point.new({:x => @position.x - 1, :y => @position.y})
-      expand_map(cmd, destination)
+  def execute_movement(cmd:, x_modifier: 0, y_modifier: 0)
+    destination = Point.new({:x => @position.x + x_modifier, :y => @position.y + y_modifier})
+    expand_map(cmd, destination)
 
-      @map[@position.x - @x_offset][@position.y - @y_offset] = Point::VISITED
-      @map[destination.x - @x_offset][destination.y - @y_offset] = Point::CURRENT
+    @map[@position.x - @x_offset][@position.y - @y_offset] = Point::VISITED
+    @map[destination.x - @x_offset][destination.y - @y_offset] = Point::CURRENT
 
-      @position = destination
-    when :right
-      destination = Point.new({:x => @position.x, :y => @position.y + 1})
-      expand_map(cmd, destination)
-
-      @map[@position.x - @x_offset][@position.y - @y_offset] = Point::VISITED
-      @map[destination.x - @x_offset][destination.y - @y_offset] = Point::CURRENT
-
-      @position = destination
-    when :down
-      destination = Point.new({:x => @position.x + 1, :y => @position.y})
-      expand_map(cmd, destination)
-
-      @map[@position.x - @x_offset][@position.y - @y_offset] = Point::VISITED
-      @map[destination.x - @x_offset][destination.y - @y_offset] = Point::CURRENT
-
-      @position = destination
-    when :left
-      destination = Point.new({:x => @position.x, :y => @position.y - 1})
-      expand_map(cmd, destination)
-
-      @map[@position.x - @x_offset][@position.y - @y_offset] = Point::VISITED
-      @map[destination.x - @x_offset][destination.y - @y_offset] = Point::CURRENT
-
-      @position = destination
-    end
+    @position = destination
   end
 
   def expand_map(cmd, destination)
@@ -88,67 +87,6 @@ class Navigator
         line.unshift(Point::UNKNOWN)
       end
       @y_offset -= 1
-      return
-    end
-  end
-
-  def show_map
-    puts "Current Position => x: #{@position.x} | y: #{@position.y}"
-    puts '  x'
-    print 'y  '
-    (0...@map.first.size).each do |y|
-      print '%3d' % [y + @y_offset]
-    end
-    puts
-    @map.each_with_index do |line, x|
-      print '%3d ' % [x + @x_offset]
-      line.each_with_index do |pos, y|
-        if ((x + @x_offset) == 0 && (y + @y_offset) == 0) && pos != Point::CURRENT
-          print " X ".on_yellow.black
-        else
-          print " o ".on_blue.white if pos == Point::UNKNOWN
-          print " o ".on_green.white if pos == Point::VISITED
-          print "<^>".on_red.white if pos == Point::CURRENT
-        end
-      end
-      puts
-    end
-  end
-
-  def read_keyboard
-    key = Keyboard.read_char
-
-    case key
-    when "\e[A"
-      return :up
-    when "\e[B"
-      return :down
-    when "\e[C"
-      return :right
-    when "\e[D"
-      return :left
-    when "\r"
-      return :enter
-    when "\u0003"
-      exit 0
     end
   end
 end
-
-class Point
-  UNKNOWN = nil
-  CURRENT = 0
-  VISITED = 1
-  BARRIER = -1
-
-  attr_accessor :x, :y
-
-  def initialize(args)
-    @x = args[:x]
-    @y = args[:y]
-  end
-end
-
-navigator = Navigator.new
-navigator.exec
-
