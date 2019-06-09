@@ -1,6 +1,25 @@
 require 'io/console'
 
 class Keyboard
+  def self.read
+    case Keyboard.read_char
+    when "\e[A"
+      return :up
+    when "\e[B"
+      return :down
+    when "\e[C"
+      return :right
+    when "\e[D"
+      return :left
+    when "\r"
+      return :enter
+    when "\u0003"
+      exit 0
+    end
+  end
+
+  private
+
   def self.read_char
     STDIN.echo = false
     STDIN.raw!
