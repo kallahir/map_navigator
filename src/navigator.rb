@@ -16,8 +16,6 @@ class Navigator
     while true
       system('clear')
       show_map
-      pp @position
-      pp @x_offset
       cmd = read_keyboard
       move(cmd)
     end
@@ -92,7 +90,9 @@ class Navigator
   end
 
   def show_map
-    print '   '
+    puts "Current Position => x: #{@position.x} | y: #{@position.y}"
+    puts '  x'
+    print 'y  '
     (0...@map.first.size).each do |y|
       print '%3d' % [y + @y_offset]
     end
@@ -100,10 +100,13 @@ class Navigator
     @map.each_with_index do |line, x|
       print '%3d ' % [x + @x_offset]
       line.each_with_index do |pos, y|
-        # TODO: add different character for 0,0
-        print " o ".on_blue.white if pos == Point::UNKNOWN
-        print " o ".on_green.white if pos == Point::VISITED
-        print " o ".on_red.white if pos == Point::CURRENT
+        if ((x + @x_offset) == 0 && (y + @y_offset) == 0) && pos != Point::CURRENT
+          print " X ".on_yellow.black
+        else
+          print " o ".on_blue.white if pos == Point::UNKNOWN
+          print " o ".on_green.white if pos == Point::VISITED
+          print " o ".on_red.white if pos == Point::CURRENT
+        end
       end
       puts
     end
