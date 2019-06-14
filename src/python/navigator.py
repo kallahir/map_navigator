@@ -1,5 +1,6 @@
 from keyboard import Keyboard
 from point import Point
+from colorama import Back, Fore, Style
 
 class Navigator:
     def __init__(self):
@@ -32,15 +33,15 @@ class Navigator:
             y_count = 0
             for pos in line:
                 if ((x_count + self.x_offset) == 0 and (y_count + self.y_offset) == 0) and pos != Point.CURRENT:
-                    print " X ",
+                    print (Fore.BLACK + Back.YELLOW + " X "),
                 elif pos == Point.UNKNOWN:
-                    print " o ",
+                    print (Fore.WHITE + Back.BLUE + " o "),
                 elif pos == Point.VISITED:
-                    print " o ",
+                    print (Fore.WHITE + Back.GREEN + " o "),
                 else:
-                    print "<^>",
+                    print (Fore.WHITE + Back.RED + "<^>"),
                 y_count += 1
-            print
+            print Style.RESET_ALL
             x_count += 1
 
     def __execute_movement(self, cmd, x_modifier = 0, y_modifier = 0):
