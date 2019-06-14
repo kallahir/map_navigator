@@ -12,19 +12,21 @@ class _Getch:
         return ch
 
 class Keyboard:
-    UP = "up"
-    DOWN = "down"
-    LEFT = "left"
-    RIGHT = "right"
-    ENTER = "enter"
+    UP      = "up"
+    DOWN    = "down"
+    LEFT    = "left"
+    RIGHT   = "right"
+    ENTER   = "enter"
     INVALID = "invalid"
+    CLOSE   = "close"
+    SAVE    = "save"
 
     @staticmethod
     def read():
         while(True):
             key = Keyboard.read_char()
             if key == 3:
-                exit(1)
+                return Keyboard.CLOSE
             elif key == 65:
                 return Keyboard.UP
             elif key == 66:
@@ -35,6 +37,8 @@ class Keyboard:
                 return Keyboard.LEFT
             elif key == 13:
                 return Keyboard.ENTER
+            elif key == 115:
+                return Keyboard.SAVE
             elif key == 27 or key == 91:
                 continue
             else:

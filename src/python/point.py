@@ -1,5 +1,5 @@
 class Point:
-    UNKNOWN = None
+    UNKNOWN = 99
     CURRENT = 0
     VISITED = 1
     BARRIER = -1

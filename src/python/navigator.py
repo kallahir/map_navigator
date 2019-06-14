@@ -1,13 +1,13 @@
 from keyboard import Keyboard
 from point import Point
 from colorama import Back, Fore, Style
+import os
 
 class Navigator:
+    MAP_FILE = './data/map'
+
     def __init__(self):
-        self.position = Point(0,0)
-        self.map = [[Point.CURRENT]]
-        self.x_offset = 0
-        self.y_offset = 0
+        self.map, self.position, self.x_offset, self.y_offset = self.__load_map()
 
     def move(self, cmd):
         if cmd == Keyboard.UP:
@@ -18,6 +18,17 @@ class Navigator:
             self.__execute_movement(cmd, x_modifier = 1)
         elif cmd == Keyboard.LEFT:
             self.__execute_movement(cmd, y_modifier = -1)
+
+    def save_map(self):
+        with open(self.MAP_FILE, "w") as map_file:
+            separator = ","
+            new_line = "\n"
+            map_file.write(str(self.position.x) + separator + str(self.position.y) + new_line)
+            map_file.write(str(self.x_offset) + separator + str(self.y_offset) + new_line)
+            for line in self.map:
+                map_file.write(separator.join(str(i) for i in line))
+                map_file.write(new_line)
+            map_file.close()
 
     def show_map(self):
         print "Current Position => x: %d | y: %d" % (self.position.x, self.position.y)
@@ -78,4 +89,19 @@ class Navigator:
             for line in self.map:
                 line.insert(0, Point.UNKNOWN)
             self.y_offset -= 1
+
+    def __load_map(self):
+        if os.path.isfile(self.MAP_FILE):
+            map_loaded = []
+            map_file = open(self.MAP_FILE, "r")
+
+            x, y = map_file.readline().split(",")
+            x_off, y_off = map_file.readline().split(",")
+
+            for line in map_file.readlines():
+                map_loaded.append([int(i) for i in line.split(",")])
+
+            return map_loaded, Point(int(x),int(y)), int(x_off), int(y_off)
+
+        return [[Point.CURRENT]], Point(0,0), 0, 0
 
