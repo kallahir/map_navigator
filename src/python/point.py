@@ -10,3 +10,4 @@ class Point:
 
     def coordinates(self):
         return self.x, self.y
+

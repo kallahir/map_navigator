@@ -11,6 +11,6 @@ def main():
         navigator.show_map()
         navigator.move(Keyboard.read())
 
-
 if __name__ == "__main__":
     main()
+

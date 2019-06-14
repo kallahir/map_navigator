@@ -48,3 +48,4 @@ class Keyboard:
             if key != '':
                 break
         return ord(key)
+
