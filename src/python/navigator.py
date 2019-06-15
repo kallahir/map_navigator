@@ -66,6 +66,9 @@ class Navigator:
         destination = Point(self.position.x + x_modifier, self.position.y + y_modifier)
         self.__expand_map(cmd, destination)
 
+        if self.map[destination.x - self.x_offset][destination.y - self.y_offset] == Point.BARRIER:
+            return
+
         self.map[self.position.x - self.x_offset][self.position.y - self.y_offset] = Point.VISITED
         self.map[destination.x - self.x_offset][destination.y - self.y_offset] = Point.CURRENT
 
@@ -133,25 +136,17 @@ class Navigator:
 
         count = 0
         for el in right:
-            total = biggest
-            if len(right) >= biggest:
-                total = biggest + 1
-            line = [Point.UNKNOWN] * total
+            line = [Point.UNKNOWN] * (biggest + 1)
             line[count+1] = el
             map_loaded.append(line)
             count += 1
 
         count = 0
         for el in left:
-            total = biggest
-            if len(left) >= biggest:
-                total = biggest + 1
-            line = [Point.UNKNOWN] * total
+            line = [Point.UNKNOWN] * (biggest + 1)
             line[count+1] = el
             map_loaded.insert(0,line)
             count += 1
 
-        x_off = len(left) * -1
-
-        return map_loaded, Point(0,0), x_off, 0
+        return map_loaded, Point(0,0), -len(left), 0
 

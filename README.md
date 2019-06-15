@@ -15,9 +15,8 @@
 
 ## Improvements
 
-* Add barriers and collision detection.
 * Add partial and total barriers.
 
 ## Known Issues
 
-* The left and right sensor initial read have a minor issue where the lines are being crated with one less element.
+* Nothing right now.
