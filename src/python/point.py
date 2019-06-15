@@ -1,8 +1,9 @@
 class Point:
-    UNKNOWN = 99
-    CURRENT = 0
-    VISITED = 1
     BARRIER = -1
+    CURRENT = 0
+    CLEAR   = 1
+    VISITED = 2
+    UNKNOWN = 99
 
     def __init__(self, x, y):
         self.x = x

@@ -1,13 +1,16 @@
 from keyboard import Keyboard
 from point import Point
+from sensor import Sensor
 from colorama import Back, Fore, Style
+
 import os
 
 class Navigator:
     MAP_FILE = './data/map'
 
     def __init__(self):
-        self.map, self.position, self.x_offset, self.y_offset = self.__load_map()
+        # self.map, self.position, self.x_offset, self.y_offset = self.__load_map()
+        self.map, self.position, self.x_offset, self.y_offset = self.__init_map_from_sensors()
 
     def move(self, cmd):
         if cmd == Keyboard.UP:
@@ -46,9 +49,13 @@ class Navigator:
                 if ((x_count + self.x_offset) == 0 and (y_count + self.y_offset) == 0) and pos != Point.CURRENT:
                     print (Fore.BLACK + Back.YELLOW + " X "),
                 elif pos == Point.UNKNOWN:
-                    print (Fore.WHITE + Back.BLUE + " o "),
+                    print (Fore.BLACK + Back.WHITE + " o "),
                 elif pos == Point.VISITED:
                     print (Fore.WHITE + Back.GREEN + " o "),
+                elif pos == Point.BARRIER:
+                    print (Fore.WHITE + Back.RED + " / "),
+                elif pos == Point.CLEAR:
+                    print (Fore.WHITE + Back.BLUE + " o "),
                 else:
                     print (Fore.WHITE + Back.RED + "<^>"),
                 y_count += 1
@@ -104,4 +111,47 @@ class Navigator:
             return map_loaded, Point(int(x),int(y)), int(x_off), int(y_off)
 
         return [[Point.CURRENT]], Point(0,0), 0, 0
+
+    def __init_map_from_sensors(self):
+        map_loaded = [[Point.CURRENT]]
+
+        front = Sensor().read()
+        left  = Sensor().read()
+        right = Sensor().read()
+
+        biggest = max(len(front), len(left), len(right))
+
+        if len(front) < biggest:
+            diff = biggest - len(front)
+            for el in front:
+                map_loaded[0].append(el)
+            for i in range(diff):
+                map_loaded[0].append(Point.UNKNOWN)
+        else:
+            for el in front:
+                map_loaded[0].append(el)
+
+        count = 0
+        for el in right:
+            total = biggest
+            if len(right) >= biggest:
+                total = biggest + 1
+            line = [Point.UNKNOWN] * total
+            line[count+1] = el
+            map_loaded.append(line)
+            count += 1
+
+        count = 0
+        for el in left:
+            total = biggest
+            if len(left) >= biggest:
+                total = biggest + 1
+            line = [Point.UNKNOWN] * total
+            line[count+1] = el
+            map_loaded.insert(0,line)
+            count += 1
+
+        x_off = len(left) * -1
+
+        return map_loaded, Point(0,0), x_off, 0
 

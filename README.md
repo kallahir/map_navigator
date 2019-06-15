@@ -20,4 +20,4 @@
 
 ## Known Issues
 
-* Nothing right now.
+* The left and right sensor initial read have a minor issue where the lines are being crated with one less element.
